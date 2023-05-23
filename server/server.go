@@ -1,14 +1,13 @@
 package server
 
 import (
-	"bufio"
 	"fmt"
 	"net"
 	"os"
 )
 
 func Start(host string, port string) {
-	fmt.Print("Starting ", host, " : ", port)
+	fmt.Println("Starting ", host, " : ", port)
 	listener, err := net.Listen("tcp", host+":"+port)
 
 	if err != nil {
@@ -25,23 +24,18 @@ func Start(host string, port string) {
 			fmt.Println("error: ", err)
 			os.Exit(1)
 		}
-
 		go processConnection(connection)
 	}
 }
 
 func processConnection(conn net.Conn) {
-	buf, err := bufio.NewReader(conn).ReadBytes('\n')
-
+	buffer := make([]byte, 1024)
+	mLen, err := conn.Read(buffer)
 	if err != nil {
-		fmt.Println("Client left.")
-		conn.Close()
-		return
+		fmt.Println("Error reading:", err.Error())
 	}
-
-	fmt.Println("Client message:", string(buf[:len(buf)-1]))
-
-	conn.Write([]byte("message: " + string(buf[:len(buf)-1])))
+	fmt.Println("Received: ", string(buffer[:mLen]))
+	conn.Write([]byte("Thanks! Got your message:" + string(buffer[:mLen])))
 
 	conn.Close()
 }
