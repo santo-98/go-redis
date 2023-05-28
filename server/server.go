@@ -1,10 +1,18 @@
 package server
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
+	"log"
 	"net"
 	"os"
 )
+
+type Data struct {
+	Key   interface{}
+	Value interface{}
+}
 
 func Start(host string, port string) {
 	fmt.Println("Starting ", host, " : ", port)
@@ -30,12 +38,27 @@ func Start(host string, port string) {
 
 func processConnection(conn net.Conn) {
 	buffer := make([]byte, 1024)
-	mLen, err := conn.Read(buffer)
+	_, err := conn.Read(buffer)
 	if err != nil {
 		fmt.Println("Error reading:", err.Error())
 	}
-	fmt.Println("Received: ", string(buffer[:mLen]))
-	conn.Write([]byte("Thanks! Got your message:" + string(buffer[:mLen])))
+	data := decoder(buffer)
+	fmt.Println(data.Key, data.Value)
+	conn.Write([]byte("Thanks! Got your message:"))
 
 	conn.Close()
+}
+
+func decoder(encodedData []byte) Data {
+	var buf bytes.Buffer
+	buf.Write(encodedData)
+	decoder := gob.NewDecoder(&buf)
+
+	var decodedData Data
+	err := decoder.Decode(&decodedData)
+	if err != nil {
+		log.Fatal("Decode error:", err)
+	}
+
+	return decodedData
 }
