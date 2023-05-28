@@ -29,7 +29,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	enc := encoder("1", 1)
+	enc := encoder(12, 1)
 	_, err = connection.Write(enc)
 
 	if err != nil {

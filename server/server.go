@@ -14,6 +14,8 @@ type Data struct {
 	Value interface{}
 }
 
+var dataStore = make(map[interface{}]interface{})
+
 func Start(host string, port string) {
 	fmt.Println("Starting ", host, " : ", port)
 	listener, err := net.Listen("tcp", host+":"+port)
@@ -37,6 +39,7 @@ func Start(host string, port string) {
 }
 
 func processConnection(conn net.Conn) {
+	fmt.Println("before", dataStore)
 	buffer := make([]byte, 1024)
 	_, err := conn.Read(buffer)
 	if err != nil {
@@ -44,7 +47,9 @@ func processConnection(conn net.Conn) {
 	}
 	data := decoder(buffer)
 	fmt.Println(data.Key, data.Value)
-	conn.Write([]byte("Thanks! Got your message:"))
+	dataStore[data.Key] = data.Value
+	fmt.Println("after", dataStore)
+	conn.Write([]byte("Data Received"))
 
 	conn.Close()
 }
