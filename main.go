@@ -12,7 +12,7 @@ func main() {
 		Port: "3000",
 	}
 
-	s.Set("new", 1)
-	key, value := s.Get("ne1w")
+	s.Set("someKey", 1)
+	key, value := s.Get("someKey")
 	fmt.Println("Key and Value: ", key, value)
 }

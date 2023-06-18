@@ -68,7 +68,7 @@ func setData(data Data, conn net.Conn) {
 func getData(data Data, conn net.Conn) {
 	enc := encoder(Data{
 		Key:   data.Key,
-		Value: data.Value,
+		Value: dataStore[data.Key],
 	})
 
 	conn.Write(enc)

@@ -41,9 +41,8 @@ func (config Config) Set(key interface{}, value interface{}) {
 		fmt.Println("error: ", err)
 		os.Exit(1)
 	}
-	message, _ := bufio.NewReader(connection).ReadString('\n')
+	bufio.NewReader(connection).ReadString('\n')
 
-	log.Print("Server message: " + message)
 	defer connection.Close()
 }
 
